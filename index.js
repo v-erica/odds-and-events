@@ -1,13 +1,17 @@
 // === State ===
-//   const $form = $formSection.querySelector("form")
-//   const $addBtn = $formSection.querySelector("#addBtn");
-//   const $sortBtn = $formSection.querySelector("#sortBtn");
-//   const $sortAllBtn = $formSection.querySelector("#sortAllBtn");
 
-//
+// It was helpful for me to start with === Render === first
+
+// Goals:
+// Plan the end-state HTML
+// Think through anchor tags to replace, then create nodes / components that will replace them
+// Then create the data that plugs in
+
 const bankArr = [];
 const oddsArr = [];
 const evensArr = [];
+
+// initializing our empty arrays for bank, odds, and evens
 
 function renderNumbers() {
   document.querySelector(".bank").textContent = bankArr.join(", ");
@@ -15,9 +19,13 @@ function renderNumbers() {
   document.querySelector(".evens").textContent = evensArr.join(", ");
 }
 
+// this function selects each of the HTML elements and updates them with the appropriate arrays
+
 function addToBank(numInput) {
   bankArr.push(numInput);
 }
+
+// addToBank is the function that pushes a new number from the form into the Bank
 
 function sortOne(bankArr) {
   if (bankArr.length === 0) return;
@@ -29,6 +37,10 @@ function sortOne(bankArr) {
   } else oddsArr.push(num);
 }
 
+// sortOne is the function we're going to attach to our Sort 1 button
+// it pulls a number from the bank array and stores it under variable num
+// then it pushes that value to the odds or evens array
+
 function sortAll(bankArr) {
   if (bankArr.length === 0) return;
   for (const num of bankArr) {
@@ -39,18 +51,13 @@ function sortAll(bankArr) {
   bankArr.length = 0;
 }
 
-//   $sortBtn.addEventListener("click", (event) => {
-//     event.preventDefault();
+// sortAll is the function we're going to attach to the Sort All button
+// it loops through the bank array and checks for evens vs odds, then sorts
+// at the end it clears the bank array since we've pushed each item to a different array
 
-//     const data = new FormData($form);
-//     const numberEntered = data.get("numInput");
-//     addToBank(numberEntered);
+// === Components ===
 
-//   });
-
-// === Component ===
-
-// TODO: Create node for form and buttons
+// For the below functions, we're going to create nodules that will replace the anchors in the Render function
 
 function createForm() {
   const $form = document.createElement("form");
@@ -65,23 +72,40 @@ function createForm() {
     <button type="button" id="sortAllBtn">Sort All</button>
  `;
 
+  // we're going to have it create this nodule because we need to reset the form when Add number is clicked
+  // and we need the buttons inline
+
+  // below we're adding event listeners to each button listed in the HTML above
+
   const $addBtn = $form.querySelector("#addBtn");
   const $sortBtn = $form.querySelector("#sortBtn");
   const $sortAllBtn = $form.querySelector("#sortAllBtn");
 
   $addBtn.addEventListener("click", (event) => {
     event.preventDefault();
-    //   const $form = $formSection.querySelector("form");
 
     const data = new FormData($form);
+    // new creates the object
+    // FormData() grabs all key-value pairs from a <form> element (that we stored in $form)
+    // stores new object and its content under data variable
+
     const numberEntered = Number(data.get("numInput"));
+    // .get("test") pulls any input for name = "test" --- and we're storing it in numberEntered
 
     if (Number.isNaN(numberEntered)) return;
+    // Number.isNaN() returns true if the value is actually NaN
+    // So we're saying if the number in numberEntered is NaN, then stop running this function
+    // We cannot do numberEntered === NaN because NaN is technically a number
 
     addToBank(numberEntered);
     $form.reset();
+    // .reset() is a built-in method on HTML form elements
+    // It returns the form to its original state
     renderNumbers();
+    // we're invoking the renderNumbers() function to make sure the data's updated
   });
+
+  // Sort 1 button // Adding event listener
 
   $sortBtn.addEventListener("click", (event) => {
     event.preventDefault();
@@ -89,6 +113,8 @@ function createForm() {
     sortOne(bankArr);
     renderNumbers();
   });
+
+  // Sort All button // Adding event listener
 
   $sortAllBtn.addEventListener("click", (event) => {
     event.preventDefault();
@@ -99,10 +125,8 @@ function createForm() {
 
   return $form;
 }
-// Grab button ids from above to add event listeners
 
-// Add Number button
-// TODO: Create node for bank, odds, and evens
+// function to create node that replaces HTML and updates the data in each <p> element
 
 function createSection() {
   const $tableSection = document.createElement("section");
@@ -140,9 +164,4 @@ function render() {
   renderNumbers();
 }
 
-// async function init() {
-//   await componentNode();
 render();
-// }
-
-// init();
